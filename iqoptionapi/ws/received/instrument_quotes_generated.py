@@ -28,8 +28,8 @@ def instrument_quotes_generated(api, message):
                     ans[symble] = ProfitPercent
                 except:
                     pass
-        api.instrument_quites_generated_timestamp[Active_name][
+        api.instrument_quotes_generated_timestamp[Active_name][
             period] = message["msg"]["expiration"]["timestamp"]
-        api.instrument_quites_generated_data[Active_name][period] = ans
+        api.instrument_quotes_generated_data[Active_name][period] = ans
 
         api.instrument_quotes_generated_raw_data[Active_name][period] = message

@@ -9,17 +9,10 @@ import ssl
 import atexit
 from collections import deque
 from iqoptionapi.http.login import Login
-from iqoptionapi.http.loginv2 import Loginv2
 from iqoptionapi.http.logout import Logout
 from iqoptionapi.http.login2fa import Login2FA
 from iqoptionapi.http.send_sms import SMS_Sender
 from iqoptionapi.http.verify import Verify
-from iqoptionapi.http.getprofile import Getprofile
-from iqoptionapi.http.auth import Auth
-from iqoptionapi.http.token import Token
-from iqoptionapi.http.appinit import Appinit
-from iqoptionapi.http.billing import Billing
-from iqoptionapi.http.buyback import Buyback
 from iqoptionapi.http.changebalance import Changebalance
 from iqoptionapi.http.events import Events
 from iqoptionapi.ws.client import WebsocketClient
@@ -86,22 +79,17 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
     profile = Profile()
     candles = Candles()
     listinfodata = ListInfoData()
-    api_option_init_all_result_v2 = []
     # for digital
     underlying_list_data = None
     position_changed = None
-    instrument_quites_generated_data = nested_dict(2, dict)
+    instrument_quotes_generated_data = nested_dict(2, dict)
     instrument_quotes_generated_raw_data = nested_dict(2, dict)
-    instrument_quites_generated_timestamp = nested_dict(2, dict)
+    instrument_quotes_generated_timestamp = nested_dict(2, dict)
     strike_list = None
     leaderboard_deals_client = None
-    #position_changed_data = nested_dict(2, dict)
-    # microserviceName_binary_options_name_option=nested_dict(2,dict)
     order_async = nested_dict(2, dict)
-    order_binary = {}
     instruments = None
     financial_information = None
-    buy_id = None
     buy_order_id = None
     traders_mood = {}  # get hight(put) %
     technical_indicators = {}
@@ -162,6 +150,9 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
         # If it is false, the last failed
         # If it is true, the last buy order was successful
         self.__active_account_type = None
+        # Dynamic attributes initialized to None
+        self.api_option_init_all_result_v2 = None
+        self.api_option_init_all_result = None
 
     def prepare_http_url(self, resource):
         """Construct http url from resource url.
@@ -262,14 +253,7 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
         logger.debug(data)
         global_value.ssl_Mutual_exclusion_write = False
 
-    @property
-    def logout(self):
-        """Property for get IQ Option http login resource.
 
-        :returns: The instance of :class:`Login
-            <iqoptionapi.http.login.Login>`.
-        """
-        return Logout(self)
 
     @property
     def login(self):
@@ -290,6 +274,15 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
         return Login2FA(self)
 
     @property
+    def logout(self):
+        """Property for get IQ Option http logout resource.
+
+        :returns: The instance of :class:`Logout
+            <iqoptionapi.http.logout.Logout>`.
+        """
+        return Logout(self)
+
+    @property
     def send_sms_code(self):
         """Property for get IQ Option http send sms code resource.
 
@@ -307,50 +300,8 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
         """
         return Verify(self)
 
-    @property
-    def loginv2(self):
-        """Property for get IQ Option http loginv2 resource.
 
-        :returns: The instance of :class:`Loginv2
-            <iqoptionapi.http.loginv2.Loginv2>`.
-        """
-        return Loginv2(self)
 
-    @property
-    def auth(self):
-        """Property for get IQ Option http auth resource.
-
-        :returns: The instance of :class:`Auth
-            <iqoptionapi.http.auth.Auth>`.
-        """
-        return Auth(self)
-
-    @property
-    def appinit(self):
-        """Property for get IQ Option http appinit resource.
-
-        :returns: The instance of :class:`Appinit
-            <iqoptionapi.http.appinit.Appinit>`.
-        """
-        return Appinit(self)
-
-    @property
-    def token(self):
-        """Property for get IQ Option http token resource.
-
-        :returns: The instance of :class:`Token
-            <iqoptionapi.http.auth.Token>`.
-        """
-        return Token(self)
-
-    # @property
-    # def profile(self):
-    #     """Property for get IQ Option http profile resource.
-
-    #     :returns: The instance of :class:`Profile
-    #         <iqoptionapi.http.profile.Profile>`.
-    #     """
-    #     return Profile(self)
     def reset_training_balance(self):
         # sendResults True/False
         # {"name":"sendMessage","request_id":"142","msg":{"name":"reset-training-balance","version":"2.0"}}
@@ -371,33 +322,7 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
     def events(self):
         return Events(self)
 
-    @property
-    def billing(self):
-        """Property for get IQ Option http billing resource.
 
-        :returns: The instance of :class:`Billing
-            <iqoptionapi.http.billing.Billing>`.
-        """
-        return Billing(self)
-
-    @property
-    def buyback(self):
-        """Property for get IQ Option http buyback resource.
-
-        :returns: The instance of :class:`Buyback
-            <iqoptionapi.http.buyback.Buyback>`.
-        """
-        return Buyback(self)
-# ------------------------------------------------------------------------
-
-    @property
-    def getprofile(self):
-        """Property for get IQ Option http getprofile resource.
-
-        :returns: The instance of :class:`Login
-            <iqoptionapi.http.getprofile.Getprofile>`.
-        """
-        return Getprofile(self)
 # for active code ...
 
     @property
@@ -652,12 +577,12 @@ class IQOptionAPI(object):  # pylint: disable=too-many-instance-attributes
         return Strike_list(self)
 
     @property
-    def subscribe_instrument_quites_generated(self):
-        return Subscribe_Instrument_Quites_Generated(self)
+    def subscribe_instrument_quotes_generated(self):
+        return Subscribe_Instrument_Quotes_Generated(self)
 
     @property
-    def unsubscribe_instrument_quites_generated(self):
-        return Unsubscribe_Instrument_Quites_Generated(self)
+    def unsubscribe_instrument_quotes_generated(self):
+        return Unsubscribe_Instrument_Quotes_Generated(self)
 
     @property
     def place_digital_option(self):

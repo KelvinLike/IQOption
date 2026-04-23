@@ -27,6 +27,7 @@ from iqoptionapi.ws.received.top_assets_updated import top_assets_updated
 from iqoptionapi.ws.received.strike_list import strike_list
 from iqoptionapi.ws.received.traders_mood_changed import traders_mood_changed
 from iqoptionapi.ws.received.order import order
+from iqoptionapi.ws.received.option import option
 from iqoptionapi.ws.received.position import position
 from iqoptionapi.ws.received.positions import positions
 from iqoptionapi.ws.received.order_placed_temp import order_placed_temp
@@ -122,6 +123,7 @@ class WebsocketClient(object):
         # ------for forex&cfd&crypto..
         order_placed_temp(self.api, message)
         order(self.api, message)
+        option(self.api, message)
         position(self.api, message)
         positions(self.api, message)
         deferred_orders(self.api, message)
