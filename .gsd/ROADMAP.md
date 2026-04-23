@@ -4,19 +4,25 @@
 > **Milestone**: v1.0 - Estabilização e Atualização
 
 ## Must-Haves (from SPEC)
-- [ ] Correção multi-thread `get_candles`.
+- [x] Correção multi-thread `get_candles`.
 - [ ] Operações Binárias, Digitais e Blitz funcionais.
 - [ ] WebSocket atualizado e estável.
 
 ## Phases
 
 ### Phase 1: Diagnóstico e WebSocket
-**Status**: ⬜ Not Started
+**Status**: 🟩 Completed
 **Objective**: Validar a conexão atual, atualizar endpoints e estabilizar o core do WebSocket.
 **Requirements**: REQ-06
+- [x] Criar script de diagnóstico inicial (`diagnostic_test.py`).
+- [x] Executar diagnóstico e capturar logs de erro (Mercado Fechado / WebSocket Timeout).
+- [x] Corrigir bug de callbacks do WebSocket (on_close/on_error) no `client.py`.
+- [x] Atualizar `stable_api.py` para carregar ativos Digitais via `get_digital_underlying`.
+- [x] Implementar suporte à chave `blitz` no carregamento de ativos.
+- [x] Validar conexão estável pós-correções.
 
 ### Phase 2: Correção de Fluxo de Dados (Multi-thread)
-**Status**: ⬜ Not Started
+**Status**: 🟩 Completed
 **Objective**: Corrigir a race condition no `get_candles` e garantir que o estado da API seja thread-safe.
 **Requirements**: REQ-04, REQ-05
 
