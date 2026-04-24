@@ -6,8 +6,8 @@ import iqoptionapi.global_value as global_value
 # Configuração de Log reduzida para focar no essencial
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
-email = "testedemo159@gmail.com"
-password = "testedemo20"
+email = "[EMAIL_ADDRESS]"
+password = "[PASSWORD]"
 
 api = IQ_Option(email, password)
 

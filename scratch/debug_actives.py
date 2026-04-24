@@ -5,8 +5,8 @@ from iqoptionapi.stable_api import IQ_Option
 # Configurar logging para ver tudo
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
-email = "testedemo159@gmail.com"
-password = "testedemo20"
+email = "[EMAIL_ADDRESS]"
+password = "[PASSWORD]"
 
 api = IQ_Option(email, password)
 check, reason = api.connect()

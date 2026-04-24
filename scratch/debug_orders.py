@@ -10,8 +10,8 @@ from iqoptionapi.constants import ACTIVES
 # Configuração de Log
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
 
-email = "testedemo159@gmail.com"
-password = "testedemo20"
+email = "[EMAIL_ADDRESS]"
+password = "[PASSWORD]"
 
 api = IQ_Option(email, password)
 
