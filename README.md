@@ -24,7 +24,7 @@ Siga os passos abaixo para configurar o ambiente em sua máquina:
 1. **Clonar o Repositório**
    ```bash
    git clone <url-do-repositorio>
-   cd Importacao
+   cd IQ-Option
    ```
 
 2. **Criar um Ambiente Virtual (Recomendado)**

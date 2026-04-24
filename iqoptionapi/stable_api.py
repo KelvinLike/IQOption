@@ -153,14 +153,10 @@ class IQ_Option:
         return OP_code.ACTIVES
 
     def update_ACTIVES_OPCODE(self):
-        # update from binary option
-        self.get_ALL_Binary_ACTIVES_OPCODE()
-        # crypto /dorex/cfd
-        self.instruments_input_all_in_ACTIVES()
-        dicc = {}
-        for lis in sorted(OP_code.ACTIVES.items(), key=operator.itemgetter(1)):
-            dicc[lis[0]] = lis[1]
-        OP_code.ACTIVES = dicc
+        """Atualiza o mapeamento de nomes de ativos para IDs (OP_code.ACTIVES)."""
+        # A função get_all_open_time já faz o trabalho de atualizar os opcodes
+        # de binárias, digitais e outros ativos via threads.
+        self.get_all_open_time()
 
     def get_name_by_activeId(self, activeId):
         info = self.get_financial_information(activeId)
