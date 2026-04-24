@@ -151,4 +151,23 @@ python test_api_v5.py
 ```
 
 ---
+
+## 🛠️ Integração em Outros Projetos
+
+Se você deseja utilizar esta biblioteca dentro de um projeto existente (como um bot de sinais ou estratégia personalizada), siga estes passos:
+
+1.  Copie a pasta `iqoptionapi` para dentro do diretório do seu projeto.
+2.  No seu arquivo principal (`main.py`), adicione o seguinte código no topo para garantir que o Python localize a pasta corretamente:
+
+```python
+import sys
+import os
+
+# Adiciona a pasta da biblioteca ao path do sistema
+# Substitua "iqoptionapi" pelo nome da pasta caso você a tenha renomeado
+sys.path.append(os.path.join(os.path.dirname(__file__), "iqoptionapi"))
+```
+
+---
+
 *Desenvolvido para traders e desenvolvedores que buscam alta performance na IQ Option.*

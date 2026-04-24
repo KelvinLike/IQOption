@@ -65,7 +65,27 @@ Foram removidos componentes que causavam instabilidade ou estavam fora de uso:
 
 ---
 
-## 5. Observações Importantes
+## 5. Atualização de Ativos (Opcodes)
+
+Na versão 5, o método `update_ACTIVES_OPCODE()` foi simplificado para garantir compatibilidade com robôs legados enquanto utiliza a nova arquitetura de threads.
+
+### Mudanças:
+- O método obsoleto `get_ALL_Binary_ACTIVES_OPCODE` foi removido.
+- `update_ACTIVES_OPCODE()` agora chama internamente `get_all_open_time()`.
+- **Recomendação**: Para novos projetos, prefira usar diretamente `api.get_all_open_time()`, que retorna um dicionário estruturado com todos os ativos abertos e seus respectivos IDs.
+
+### Exemplo de Uso:
+```python
+# Atualiza o mapeamento interno de nomes para IDs
+api.update_ACTIVES_OPCODE()
+
+# Obtém o dicionário de todos os ativos abertos no momento
+ativos_abertos = api.get_all_open_time()
+```
+
+---
+
+## 6. Observações Importantes
 
 1. **Ativos OTC**: Sempre utilize o sufixo `-OTC` (ex: `EURUSD-OTC`).
 2. **Ativos Abertos**: A API tenta encontrar o sufixo `-op` automaticamente se necessário, mas o nome padrão (ex: `EURUSD`) é o recomendado.
