@@ -1,92 +1,118 @@
 # Guia de Uso da API Refatorada (iqoptionapi v5)
 
-Este documento descreve as mudanças realizadas na biblioteca `iqoptionapi` e como utilizar as novas chamadas corrigidas e protocolos atualizados.
-
-## 1. Correção de Typos (Quites -> Quotes)
-
-Vários nomes de métodos e atributos que continham o erro de digitação "quites" foram renomeados para "quotes" para manter a consistência técnica.
-
-### Métodos da API (`IQOptionAPI`)
-- `subscribe_instrument_quotes_generated()`
-- `unsubscribe_instrument_quotes_generated()`
-
-### Atributos da API
-- `api.instrument_quotes_generated_data`
-- `api.instrument_quotes_generated_timestamp`
-
-### Métodos na `IQOption` (Stable API)
-- `get_instrument_quotes_generated_data(ACTIVE, duration)`
+Este documento descreve as funções mais importantes da biblioteca e como utilizá-las para construir seu robô de trading.
 
 ---
 
-## 2. Opções Digitais (v3.0)
+## 1. Conexão e Sessão
 
-A implementação de Opções Digitais agora utiliza o protocolo v3.0, proporcionando maior estabilidade.
+Essenciais para iniciar e manter a comunicação com os servidores da IQ Option.
 
-### Exemplo:
+- **`connect()`**: Realiza a autenticação via WebSocket.
+- **`check_connect()`**: Verifica se a conexão ainda está ativa.
+- **`connect_2fa(sms_code)`**: Usado para contas com autenticação de dois fatores.
+- **`logout()`**: Encerra a sessão com segurança.
+
 ```python
 from iqoptionapi.stable_api import IQ_Option
 
 api = IQ_Option("email", "senha")
-api.connect()
+check, reason = api.connect()
 
-# Parâmetros: valor, ativo, direção ("call"/"put"), duração (1, 5, 15)
-status, order_id = api.buy_digital(1, "EURUSD", "call", 1)
-
-if status:
-    print(f"Ordem Digital aberta! ID: {order_id}")
+if check:
+    print("Conectado!")
 else:
-    print(f"Erro: {order_id}")
+    if reason == "2FA":
+        code = input("Digite o código SMS recebido: ")
+        api.connect_2fa(code)
 ```
 
 ---
 
-## 3. Opções Blitz (v2.0)
+## 2. Gerenciamento de Conta
 
-As opções Blitz são operações binárias de curtíssimo prazo que utilizam o protocolo mais recente.
+Controle de saldo, moedas e troca de ambiente.
 
-### Exemplo:
+- **`get_balance()`**: Retorna o saldo da conta ativa.
+- **`change_balance("REAL" ou "PRACTICE")`**: Alterna entre conta real e treinamento.
+- **`get_currency()`**: Retorna a moeda da conta (ex: BRL, USD).
+- **`reset_practice_balance()`**: Reseta o saldo da conta de treinamento para $10.000.
+
+---
+
+## 3. Consulta de Ativos e Payout
+
+Identificação de mercados abertos e retorno financeiro.
+
+- **`get_all_open_time()`**: Retorna o status de abertura de todos os mercados (Binárias, Digital, Forex, etc).
+- **`get_all_profit()`**: Retorna o payout atual para Binárias/Turbo.
+- **`get_digital_payout(ativo)`**: Retorna o payout atual para Opções Digitais.
+- **`update_ACTIVES_OPCODE()`**: Atualiza internamente os mapeamentos de nomes para IDs de ativos.
+
+---
+
+## 4. Operações de Compra (Trades)
+
+As três formas principais de realizar operações na plataforma.
+
+### **Opções Binárias / Turbo**
 ```python
-# Parâmetros: valor, ativo, direção ("call"/"put"), duração em segundos (ex: 5)
-status, order_id = api.buy_blitz(1, "EURUSD", "put", 5)
-
-if status:
-    print(f"Ordem Blitz aberta! ID: {order_id}")
+# Parâmetros: valor, ativo, direção ("call"/"put"), expiração em minutos
+status, id = api.buy(10, "EURUSD", "call", 1)
 ```
 
----
-
-## 4. Remoção de Módulos Obsoletos
-
-Foram removidos componentes que causavam instabilidade ou estavam fora de uso:
-- **HTTP Loginv2**: Removido em favor do `Login` padrão.
-- **Buyback**: Removido. Vendas são tratadas por `sell_option` e `sell_digital_option`.
-- **Código Morto**: Grandes blocos de comentários e funções órfãs em `stable_api.py` e `api.py` foram eliminados.
-
----
-
-## 5. Atualização de Ativos (Opcodes)
-
-Na versão 5, o método `update_ACTIVES_OPCODE()` foi simplificado para garantir compatibilidade com robôs legados enquanto utiliza a nova arquitetura de threads.
-
-### Mudanças:
-- O método obsoleto `get_ALL_Binary_ACTIVES_OPCODE` foi removido.
-- `update_ACTIVES_OPCODE()` agora chama internamente `get_all_open_time()`.
-- **Recomendação**: Para novos projetos, prefira usar diretamente `api.get_all_open_time()`, que retorna um dicionário estruturado com todos os ativos abertos e seus respectivos IDs.
-
-### Exemplo de Uso:
+### **Opções Digitais (v3.0)**
+Protocolo atualizado para maior estabilidade.
 ```python
-# Atualiza o mapeamento interno de nomes para IDs
-api.update_ACTIVES_OPCODE()
+# Parâmetros: valor, ativo, direção ("call"/"put"), expiração (1, 5 ou 15 minutos)
+status, id = api.buy_digital(10, "EURUSD", "put", 5)
+```
 
-# Obtém o dicionário de todos os ativos abertos no momento
-ativos_abertos = api.get_all_open_time()
+### **Opções Blitz (v2.0)**
+Operações de curtíssimo prazo com expiração em segundos.
+```python
+# Parâmetros: valor, ativo, direção ("call"/"put"), duração em segundos (ex: 5, 10, 30)
+status, id = api.buy_blitz(10, "EURUSD", "call", 5)
 ```
 
 ---
 
-## 6. Observações Importantes
+## 5. Monitoramento e Fechamento de Ordens
 
-1. **Ativos OTC**: Sempre utilize o sufixo `-OTC` (ex: `EURUSD-OTC`).
-2. **Ativos Abertos**: A API tenta encontrar o sufixo `-op` automaticamente se necessário, mas o nome padrão (ex: `EURUSD`) é o recomendado.
-3. **SSL**: A verificação de SSL está configurada para ignorar erros de hostname em ambientes de build (PyInstaller).
+- **`check_win_v4(id)`**: Verifica o resultado de uma ordem Binária (Win/Loss).
+- **`check_win_digital_v2(id)`**: Verifica o resultado de uma ordem Digital.
+- **`sell_option(id)`**: Vende uma opção Binária antes do vencimento.
+- **`sell_digital_option(id)`**: Vende uma opção Digital antes do vencimento.
+
+---
+
+## 6. Dados de Mercado e Real-time (Candles)
+
+### **Histórico de Velas**
+```python
+# Ativo, Intervalo (segundos), Quantidade, Timestamp final
+candles = api.get_candles("EURUSD", 60, 100, time.time())
+```
+
+### **Streaming em Tempo Real**
+```python
+# Inicia a coleta contínua
+api.start_candles_stream("EURUSD", 60, 100)
+
+# Acessa os dados a qualquer momento
+velas = api.get_realtime_candles("EURUSD", 60)
+
+# Para a coleta
+api.stop_candles_stream("EURUSD", 60)
+```
+
+---
+
+## 7. Observações Técnicas
+
+1. **Ativos OTC**: Durante fins de semana, adicione o sufixo `-OTC` (ex: `EURUSD-OTC`).
+2. **Typos Corrigidos**: Na v5, todos os métodos que usavam "quites" foram corrigidos para "quotes" (ex: `get_instrument_quotes_generated_data`).
+3. **SSL**: A verificação SSL está otimizada para ignorar erros de hostname em ambientes compilados (PyInstaller).
+
+---
+*Este guia foca nos métodos mais estáveis e testados da versão 5.*
