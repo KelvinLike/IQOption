@@ -1,6 +1,19 @@
 # 🚀 IQ Option API v5 - Guia de Instalação e Uso
 
+> [!CAUTION]
+> **Atenção:** Este repositório foi desenvolvido estritamente para **fins de estudo e pesquisa**. O uso de ferramentas de automação pode violar os termos da IQ Option. Use por sua conta e risco.
+
 Bem-vindo ao repositório da **IQ Option API v5**. Esta versão foi refatorada para oferecer maior estabilidade, suporte aos protocolos mais recentes (Digital v3.0 e Blitz v2.0) e correções de bugs críticos da versão legada.
+
+---
+
+## ⚠️ Aviso Legal e Isenção de Responsabilidade
+
+**ESTE REPOSITÓRIO É APENAS PARA FINS DE ESTUDO E PESQUISA.**
+
+1. **Não Recomendado para Produção**: O uso de APIs não oficiais ou automação pode violar os **Termos de Serviço da IQ Option**, o que pode resultar no bloqueio ou banimento da sua conta.
+2. **Risco Financeiro**: O mercado financeiro envolve riscos. Não utilize este código com dinheiro real sem entender completamente o funcionamento e os riscos envolvidos.
+3. **Uso por Conta e Risco**: O desenvolvedor e os contribuidores não se responsabilizam por perdas financeiras, banimentos de contas ou qualquer outro dano decorrente do uso deste software. **Use por sua conta e risco.**
 
 ---
 
