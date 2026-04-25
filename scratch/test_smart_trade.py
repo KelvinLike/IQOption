@@ -1,12 +1,18 @@
 import time
 import logging
+import sys
+import os
+from dotenv import load_dotenv
+# Adiciona a pasta raiz ao path para encontrar o módulo 'iqoptionapi'
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from iqoptionapi.stable_api import IQ_Option
 
 # Configuração de Log
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
-
-email = "[EMAIL_ADDRESS]"
-password = "[PASSWORD]"
+load_dotenv()
+email = os.getenv("IQ_EMAIL")
+password = os.getenv("IQ_PASSWORD")
 
 api = IQ_Option(email, password)
 print("--- Conectando ---")
@@ -69,7 +75,7 @@ if check:
 
         # Testar Blitz
         print(f"\n--- Testando BLITZ em {ativo} ---")
-        status, result = api.buy_blitz(valor, ativo, direcao, 5)
+        status, result = api.buy_blitz(valor, ativo, direcao, 30)
         if status:
             print(f"Sucesso Blitz! ID: {result}")
         else:

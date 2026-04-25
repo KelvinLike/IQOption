@@ -1104,6 +1104,27 @@ class IQ_Option:
                 elif data["msg"]["position"]["close_reason"] == "expired":
                     return data["msg"]["position"]["pnl_realized"] - data["msg"]["position"]["buy_amount"]
 
+    def check_win_v4(self, id_number):
+        """
+        Verifica o resultado de uma ordem binária (Win/Loss).
+        
+        Args:
+            id_number: ID da ordem binária
+            
+        Returns:
+            str: "win" ou "lose" (ou o valor retornado pela API)
+        """
+        while True:
+            try:
+                # Tenta converter para int caso venha como string
+                id_int = int(id_number)
+                data = self.api.listinfodata.get(id_int)
+                if data["game_state"] == 1:
+                    return data["win"]
+            except:
+                pass
+            time.sleep(0.5)
+
     def check_win_digital_v2(self, buy_order_id):
 
         while self.get_async_order(buy_order_id)["position-changed"] == {}:

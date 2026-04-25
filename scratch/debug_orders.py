@@ -48,7 +48,7 @@ status, res = api.buy(1, asset, "call", 1)
 print(f"Resultado Binário: Status={status}, Resposta={res}")
 
 print("\n--- Testando Compra Blitz com Log Detalhado ---")
-status, res = api.buy_blitz(1, asset, "call", 5)
+status, res = api.buy_blitz(1, asset, "call", 30)
 print(f"Resultado Blitz: Status={status}, Resposta={res}")
 
 api.logout()
